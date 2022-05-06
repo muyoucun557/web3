@@ -6,3 +6,4 @@
 
 [001-什么是web3](./001-什么是web3/REAME.md)
 [002-EIP-721](./002-EIP-721/REAME.md)
+[003-solidity实践](./003-solidity实践/REAME.md)
