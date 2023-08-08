@@ -21,14 +21,12 @@ contract Owned {
         owner = _owner;
     }
 
-    modifier onlyOwner
-    {
+    modifier onlyOwner {
         require(msg.sender == owner, "Only the contract owner may perform this action");
         _;
     }
 
-    function nominateNewOwner(address _owner) external onlyOwner
-    {
+    function nominateNewOwner(address _owner) external onlyOwner {
         nominatedOwner = _owner;
     }
 
@@ -115,5 +113,39 @@ contract Proxy is Owned {
     modifier onlyTarget {
         require(Proxyable(msg.sender) == target, "Must be proxy target");       // TODO: 这里能直接==两个合约吗？
     }
+
+}
+
+contract Proxyable is Owned {           // is是继承语法关键字
+    Proxy public proxy;
+    Proxy public integrationProxy;
+
+    /**
+     * The caller of proxy, passed through to this contract.
+     * Note that every function using this member must apply the onlyProxy or 
+     * optionalProxy modifiers, otherwise their invocation can use stable values.
+     */
+    address messageSender;
+
+    constructor(address _proxy, address _owner) Owned(_owner) public {      // 这里的修饰符Owned(_owner)，显示调用和父合约Owned的构造函数
+        proxy = Proxy(_proxy);
+        emit ProxyUpdated(_proxy)
+    }
+
+    function setProxy(address _proxy) external onlyOwner {
+        proxy = Proxy(_proxy);
+        emit ProxyUpdated(_proxy);
+
+    }
+
+    event ProxyUpdated(address proxyAddress);
+}
+
+
+/**
+ * A proxy contract that is ERC20 compliant for the synthetix network.  符合erc20的proxy contract
+ * 
+ */
+contract ProxyERC20 is Proxy, IERC20 {
 
 }
